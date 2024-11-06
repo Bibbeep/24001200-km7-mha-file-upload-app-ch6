@@ -1,4 +1,5 @@
 const multer = require('multer');
+const { BadRequestError } = require('../utils/error');
 const MB = 1048576;
 
 module.exports = {
@@ -13,12 +14,8 @@ module.exports = {
             if (allowedTypes.includes(file.mimetype)) {
                 cb(null, true);
             } else {
-                cb(new Error('File type must be .jpg, .jpeg, .png, .gif, or .svg!'));
+                cb(new BadRequestError('File type must be .jpg, .jpeg, .png, .gif, or .svg!'));
             }
-        },
-        onError: (err, next) => {
-            err.statusCode = 400;
-            next(err);
         }
     })
 };

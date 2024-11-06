@@ -1,7 +1,10 @@
+const multer = require("multer");
+const { BadRequestError } = require("./error");
+
 module.exports = {
     errorHandler: (err, req, res, next) => {
-        if (err.statusCode) {
-            return res.status(err.statusCode).json({
+        if (err instanceof multer.MulterError || err instanceof BadRequestError) {
+            return res.status(400).json({
                 status: 'Fail',
                 message: err.message
             });
@@ -9,7 +12,7 @@ module.exports = {
 
         return res.status(500).json({
             status: 'Fail',
-            message: 'Internal Server Error'
+            message: 'Internal server error'
         });
     }
 };
