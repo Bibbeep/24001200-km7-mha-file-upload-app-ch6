@@ -17,5 +17,16 @@ module.exports = {
         }
 
         return true;
+    },
+    validateId: (data) => {
+        const { id } = data;
+
+        if (!id) {
+            throw new BadRequestError('id is required!');
+        } else if (isNaN(id)) {
+            throw new BadRequestError('id must be a number type!');
+        }
+
+        return true;
     }
 };
