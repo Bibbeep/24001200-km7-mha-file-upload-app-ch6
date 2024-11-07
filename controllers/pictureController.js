@@ -5,8 +5,8 @@ module.exports = {
     create: async (req, res, next) => {
         try {
             PictureValidation.validate(req.body, req.file);
-            const url = await Picture.upload(req.file);
-            const { id, title } = await Picture.create(req.body, url);
+            const { fileId, url } = await Picture.upload(req.file);
+            const { id, title } = await Picture.create(req.body, fileId, url);
             
             return res.status(201).json({
                 status: 'Created',

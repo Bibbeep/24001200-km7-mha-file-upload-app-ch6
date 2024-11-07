@@ -10,11 +10,15 @@ module.exports = {
             file: buffer.toString('base64')
         });
 
-        return data.url;
+        return {
+            fileId: data.fileId,
+            url: data.url
+        };
     },
-    create: async ({ title, description }, imageUrl) => {
+    create: async ({ title, description }, fileId, imageUrl) => {
         const data = await prisma.picture.create({
             data: {
+                fileId,
                 title,
                 description,
                 imageUrl
