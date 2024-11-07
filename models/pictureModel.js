@@ -25,5 +25,25 @@ module.exports = {
             id: data.id,
             title: data.title
         };
+    },
+    findAll: async () => {
+        const data = await prisma.picture.findMany({
+            select: {
+                id: true,
+                title: true,
+                imageUrl: true
+            }
+        });
+
+        return data;
+    },
+    findById: async ({ id }) => {
+        const data = await prisma.picture.findUnique({
+            where: {
+                id: parseInt(id)
+            }
+        });
+
+        return data;
     }
 };
