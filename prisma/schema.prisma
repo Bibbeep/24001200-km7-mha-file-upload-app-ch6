@@ -15,6 +15,7 @@ datasource db {
 
 model Picture {
   id            Int       @id @default(autoincrement())
+  fileId        String    @unique
   title         String
   description   String?
   createdAt     DateTime  @default(now())
