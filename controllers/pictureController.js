@@ -1,4 +1,5 @@
 const Picture = require('../models/pictureModel');
+const { BadRequestError } = require('../utils/error');
 const PictureValidation = require('../validations/pictureValidation');
 
 module.exports = {
@@ -62,5 +63,24 @@ module.exports = {
         } catch (err) {
             next(err);
         }
-    }
+    },
+    deleteById: async (req, res, next) => {
+        try {
+            PictureValidation.validateId(req.params);
+            const { fileId } = await Picture.deleteById(req.params);
+
+            if (!fileId) {
+                throw new BadRequestError('Picture not found!');
+            }
+
+            await Picture.hardDeleteByFileId(fileId);
+
+            return res.status(200).json({
+                status: 'OK',
+                message: 'Picture successfully deleted'
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
 };
