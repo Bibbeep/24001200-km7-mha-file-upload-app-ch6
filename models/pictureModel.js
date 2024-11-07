@@ -49,5 +49,30 @@ module.exports = {
         });
 
         return data;
-    }
+    },
+    deleteById: async ({ id }) => {
+        const fileId = await prisma.picture.findUnique({
+            where: {
+                id: parseInt(id)
+            },
+            select: {
+                fileId: true
+            }
+        });
+
+        if (!fileId) {
+            return false;
+        }
+
+        await prisma.picture.delete({
+            where: {
+                id: parseInt(id)
+            }
+        });
+
+        return fileId;
+    },
+    hardDeleteByFileId: async (fileId) => {
+        await imagekit.deleteFile(fileId);
+    },
 };
