@@ -1,7 +1,7 @@
 const { BadRequestError } = require("../utils/error");
 
 module.exports = {
-    validate: (data, file) => {
+    validatePost: (data, file) => {
         const { title, description } = data;
         
         if (!file) {
@@ -28,5 +28,20 @@ module.exports = {
         }
 
         return true;
-    }
+    },
+    validatePatch: (data, file) => {
+        const { title, description } = data;
+
+        if (!title && !description && !file) {
+            throw new BadRequestError('No changes occured!');
+        } else if (title === '') {
+            throw new BadRequestError('Title must not be empty!');
+        } else if (title && typeof title !== 'string') {
+            throw new BadRequestError('Title must be a string type!')
+        } else if (description && typeof description !== 'string') {
+            throw new BadRequestError('Description must be a string type!')
+        }
+
+        return true;
+    },
 };
