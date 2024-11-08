@@ -5,8 +5,8 @@ const PictureValidation = require('../validations/pictureValidation');
 module.exports = {
     create: async (req, res, next) => {
         try {
-            PictureValidation.validate(req.body, req.file);
-            const { fileId, url } = await Picture.upload(req.file);
+            PictureValidation.validatePost(req.body, req.file);
+            const { fileId, url } = await Picture.uploadImgKit(req.file);
             const { id, title } = await Picture.create(req.body, fileId, url);
             
             return res.status(201).json({
@@ -73,11 +73,40 @@ module.exports = {
                 throw new BadRequestError('Picture not found!');
             }
 
-            await Picture.hardDeleteByFileId(fileId);
+            await Picture.deleteImgKit(fileId);
 
             return res.status(200).json({
                 status: 'OK',
                 message: 'Picture successfully deleted'
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+    editById: async (req, res, next) => {
+        try {
+            PictureValidation.validateId(req.params);
+            PictureValidation.validatePatch(req.body, req.file);
+
+            let file = {
+                fileId: null,
+                url: null
+            };
+
+            if (req.file) {
+                file = await Picture.uploadImgKit(req.file);
+            }
+
+            const picture = await Picture.editById(req.params, req.body, file);
+
+            if (!picture) {
+                throw new BadRequestError('Picture not found!');
+            }
+
+            return res.status(200).json({
+                status: 'OK',
+                message: 'Picture successfully edited',
+                data: picture
             });
         } catch (err) {
             next(err);

@@ -4,7 +4,7 @@ const path = require('path');
 const prisma = new PrismaClient();
 
 module.exports = {
-    upload: async ({ originalname, buffer }) => {
+    uploadImgKit: async ({ originalname, buffer }) => {
         const data = await imagekit.upload({
             fileName: Date.now() + path.extname(originalname),
             file: buffer.toString('base64')
@@ -45,6 +45,14 @@ module.exports = {
         const data = await prisma.picture.findUnique({
             where: {
                 id: parseInt(id)
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                createdAt: true,
+                updatedAt: true,
+                imageUrl: true
             }
         });
 
@@ -72,7 +80,70 @@ module.exports = {
 
         return fileId;
     },
-    hardDeleteByFileId: async (fileId) => {
+    deleteImgKit: async (fileId) => {
         await imagekit.deleteFile(fileId);
+    },
+    editById: async ({ id }, { title, description }, { fileId, url: imageUrl }) => {
+        const existingData = await prisma.picture.findUnique({
+            where: {
+                id: parseInt(id)
+            }
+        });
+
+        if (!existingData) {
+            return false;
+        }
+
+        if (title) {
+            await prisma.picture.update({
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    title
+                }
+            });
+        }
+
+        if (description) {
+            await prisma.picture.update({
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    description
+                }
+            });
+        }
+
+        if (imageUrl && fileId) {
+            await prisma.picture.update({
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    imageUrl,
+                    fileId
+                }
+            });
+
+            await imagekit.deleteFile(existingData.fileId);
+        }
+
+        const data = await prisma.picture.findUnique({
+            where: {
+                id: parseInt(id)
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                createdAt: true,
+                updatedAt: true,
+                imageUrl: true
+            }
+        });
+
+        return data;
     },
 };
