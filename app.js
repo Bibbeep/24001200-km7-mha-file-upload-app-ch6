@@ -1,9 +1,15 @@
-const express = require('express');
-const app = express();
-const { PORT = 3000 } = process.env;
+require('dotenv').config();
 
-app.get('/', (req, res) => {
-    res.send('Binar Challenge Chapter 6');
-});
+const express = require('express');
+const router = require('./routes/pictureRoute');
+const { errorHandler } = require('./utils/errorHandler');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use(router);
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
