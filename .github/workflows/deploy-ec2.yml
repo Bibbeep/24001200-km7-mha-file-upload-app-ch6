@@ -46,6 +46,7 @@ jobs:
             cd home
             sudo mv -r -f * /var/www
             cd /var/www/
+            mv -f default /etc/nginx/sites-available/
             pwd
             ls
             npx prisma migrate deploy
