@@ -30,8 +30,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo apt -y update
-            sudo apt install nginx
+            sudo apt-get -y update
+            sudo apt-get -y install nginx
             cd home
             sudo mv * /var/www
             cd /var/www/
