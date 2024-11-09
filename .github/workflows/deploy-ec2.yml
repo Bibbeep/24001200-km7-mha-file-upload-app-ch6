@@ -20,6 +20,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Process Manager 2 (PM2)
+        run: npm i -g pm2
+
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
@@ -38,10 +44,10 @@ jobs:
             sudo apt-get -y update
             sudo apt-get -y install nginx
             cd home
-            sudo mv * /var/www
+            sudo mv -r -f * /var/www
             cd /var/www/
-            npm ci
-            npm i -g pm2
+            pwd
+            ls
             npx prisma migrate deploy
             pm2 init simple
             pm2 reload all --update-env
