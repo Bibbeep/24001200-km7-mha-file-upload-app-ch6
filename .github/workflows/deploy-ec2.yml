@@ -34,6 +34,11 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
+      - name: Export Repository Secrets
+        uses: thaind0/envfile@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         env:
