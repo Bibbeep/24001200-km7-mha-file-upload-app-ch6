@@ -68,7 +68,7 @@ jobs:
             ls
             npx prisma migrate deploy
             pm2 init simple
-            pm2 reload all --update-env
+            pm2 start
             sudo ufw allow 'Nginx HTTP'
             sudo systemctl start nginx
             sudo systemctl enable nginx
