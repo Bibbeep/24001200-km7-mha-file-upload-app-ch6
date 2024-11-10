@@ -36,30 +36,37 @@ jobs:
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
+        env:
+          NODE_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+          IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+          IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
         with:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            sudo su
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
             export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install 20.18.0
-            sudo apt-get -y update
-            sudo apt-get -y install nginx
+            apt-get -y update
+            apt-get -y install nginx
             cd home
-            sudo rm -rf /var/www/*
-            sudo mv -f * /var/www
+            rm -rf /var/www/*
+            mv -f * /var/www
             cd /var/www/
             npm ci
             npm i -g pm2
-            sudo rm /etc/nginx/sites-available/default
-            sudo mv -f default /etc/nginx/sites-available/
+            rm /etc/nginx/sites-available/default
+            mv -f default /etc/nginx/sites-available/
             pwd
             ls
             npx prisma migrate deploy
             pm2 init simple
             pm2 reload all --update-env
-            sudo ufw allow 'Nginx HTTP'
-            sudo systemctl start nginx
-            sudo systemctl enable nginx
+            ufw allow 'Nginx HTTP'
+            systemctl start nginx
+            systemctl enable nginx
