@@ -47,26 +47,26 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo su
+            sudo su root
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
             export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install 20.18.0
-            apt-get -y update
-            apt-get -y install nginx
+            sudo apt-get -y update
+            sudo apt-get -y install nginx
             cd home
-            rm -rf /var/www/*
-            mv -f * /var/www
+            sudo rm -rf /var/www/*
+            sudo mv -f * /var/www
             cd /var/www/
             npm ci
             npm i -g pm2
-            rm /etc/nginx/sites-available/default
-            mv -f default /etc/nginx/sites-available/
+            sudo rm /etc/nginx/sites-available/default
+            sudo mv -f default /etc/nginx/sites-available/
             pwd
             ls
             npx prisma migrate deploy
             pm2 init simple
             pm2 reload all --update-env
-            ufw allow 'Nginx HTTP'
-            systemctl start nginx
-            systemctl enable nginx
+            sudo ufw allow 'Nginx HTTP'
+            sudo systemctl start nginx
+            sudo systemctl enable nginx
